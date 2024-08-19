@@ -29,6 +29,8 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     private static final ItemStack SUBMIT_BUTTON;
     private static final ItemStack NOTICE_TARGET_Y;
     private static final ItemStack NOTICE_TARGET_N;
+    private static final ItemStack SELECT_ALL;
+    private static final ItemStack DESELECT_ALL;
     private final Set<UUID> selectedPlayers = new HashSet<>();
     private UUID pageUniqueId;
     @Getter
@@ -44,6 +46,12 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
                 .build();
         NOTICE_TARGET_N = new ItemBuilder(Material.REDSTONE)
                 .setDisplayName("是否通报: " + ChatColor.RED + "否")
+                .build();
+        SELECT_ALL = new ItemBuilder(Material.MILK_BUCKET)
+                .setDisplayName("全选")
+                .build();
+        DESELECT_ALL = new ItemBuilder(Material.BUCKET)
+                .setDisplayName("全不选")
                 .build();
     }
 
@@ -185,6 +193,13 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             afterCancel(clicker);
             return GUIClickResult.CANCEL_CLICK;
         });
+
+        helper.setButton(46, SELECT_ALL, clickAndRedraw(this, (clicker, clickType) -> {
+            selectedPlayers.addAll(getPlayersBaseList().stream().map(Player::getUniqueId).toList());
+        }));
+        helper.setButton(47, DESELECT_ALL, clickAndRedraw(this, (clicker, clickType) -> {
+            selectedPlayers.clear();
+        }));
 
         if (showBroadcastButton()) {
             final ItemStack switchButton = broadcast ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
