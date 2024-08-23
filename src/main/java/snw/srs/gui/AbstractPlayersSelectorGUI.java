@@ -106,10 +106,11 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
                 } else {
                     selectStatus = ChatColor.YELLOW + "点击选择!";
                 }
-                finalItem = new ItemBuilder(item)
+                final ItemBuilder builder = new ItemBuilder(item)
                         .setDisplayName(name)
-                        .setLore("", selectStatus)
-                        .build();
+                        .setLore("", selectStatus);
+                postProcessPlayerHeadButton(player, builder);
+                finalItem = builder.build();
                 int slot = listPosToInvPos(indexPlus);
                 getButtonHelper().setButton(slot, finalItem, (clicker, clickType) -> {
                     handlePlayerHeadClick(clicker, uuid);
@@ -117,6 +118,9 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
                 });
             }, runTask(getPlugin()));
         }
+    }
+
+    protected void postProcessPlayerHeadButton(Player who, ItemBuilder builder) {
     }
 
     private int listPosToInvPos(int indexPlus) {
