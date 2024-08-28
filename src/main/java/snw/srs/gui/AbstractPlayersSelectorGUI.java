@@ -31,7 +31,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     private static final ItemStack NOTICE_TARGET_N;
     private static final ItemStack SELECT_ALL;
     private static final ItemStack DESELECT_ALL;
-    private final Set<UUID> selectedPlayers = new HashSet<>();
+    protected final Set<UUID> selectedPlayers = new HashSet<>();
     private UUID pageUniqueId;
     @Getter
     @Setter(AccessLevel.PROTECTED)
