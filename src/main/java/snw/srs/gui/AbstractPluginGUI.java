@@ -29,6 +29,8 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
 
     protected AbstractPluginGUI(Plugin plugin, String title) {
         this.plugin = plugin;
+        GUIEventDispatcher.registerIfNeededFor(plugin);
+        GUIEventDispatcher.activeGUIs.put(plugin.getName(), this);
         resetHandle(title);
     }
 
@@ -92,6 +94,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         Runnable closeOp = () -> {
             closeForAll();
             clear();
+            GUIEventDispatcher.activeGUIs.remove(getPlugin().getName(), this);
         };
         if (closeInvImmediately) {
             closeOp.run();
