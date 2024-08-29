@@ -31,7 +31,8 @@ public final class GUIEventDispatcher implements Listener {
         activeGUIs = ArrayListMultimap.create();
     }
 
-    public static void registerIfNeededFor(Plugin plugin) {
+    @ApiStatus.Internal
+    static void registerIfNeededFor(Plugin plugin) {
         String name = plugin.getName();
         if (!registeredPlugins.contains(name)) {
             plugin.getServer().getPluginManager().registerEvents(new GUIEventDispatcher(plugin), plugin);
@@ -41,7 +42,7 @@ public final class GUIEventDispatcher implements Listener {
 
     // You will have no need to call this by yourself or there is a bug.
     @ApiStatus.Internal
-    public GUIEventDispatcher(Plugin plugin) {
+    private GUIEventDispatcher(Plugin plugin) {
         this.plugin = plugin;
     }
 
