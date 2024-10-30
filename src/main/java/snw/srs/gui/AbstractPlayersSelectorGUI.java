@@ -5,6 +5,8 @@ import com.google.common.math.IntMath;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -47,11 +49,21 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         DESELECT_ALL = new TranslatedItem(PLAYER_SELECTOR_DESELECT_ALL, Material.BUCKET);
     }
 
+    @Deprecated
     protected AbstractPlayersSelectorGUI(Plugin plugin, String title, UUID viewer) {
         super(plugin, title, viewer);
     }
 
+    @Deprecated
     protected AbstractPlayersSelectorGUI(Plugin plugin, String title, UUID viewer, Set<UUID> selected) {
+        this(plugin, LegacyComponentSerializer.legacySection().deserialize(title), viewer, selected);
+    }
+
+    protected AbstractPlayersSelectorGUI(Plugin plugin, Component title, UUID viewer) {
+        super(plugin, title, viewer);
+    }
+
+    protected AbstractPlayersSelectorGUI(Plugin plugin, Component title, UUID viewer, Set<UUID> selected) {
         this(plugin, title, viewer);
         this.selectedPlayers.addAll(selected);
     }

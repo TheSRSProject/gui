@@ -2,6 +2,8 @@ package snw.srs.gui;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -11,6 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import snw.srs.gui.compat.InventoryCreator;
 import snw.srs.gui.interfaces.Disposable;
 import snw.srs.gui.util.TranslatedItem;
 import snw.srs.i18n.bukkit.BukkitI18NEngine;
@@ -18,6 +21,7 @@ import snw.srs.i18n.bukkit.BukkitI18NEngine;
 import java.util.Optional;
 import java.util.UUID;
 
+import static net.kyori.adventure.text.Component.text;
 import static snw.srs.gui.GUISharedObjects.FRAME_ITEM;
 
 public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
@@ -35,7 +39,12 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     private boolean firstOpen = true;
     private GUIButtonHelper buttonHelper;
 
+    @Deprecated
     protected AbstractPluginGUI(Plugin plugin, String title, UUID viewer) {
+        this(plugin, text(title), viewer);
+    }
+
+    protected AbstractPluginGUI(Plugin plugin, Component title, UUID viewer) {
         this.plugin = plugin;
         this.i18nEngine = GUII18NEngineBoard.getOrCreate(plugin);
         this.viewer = viewer;
@@ -55,11 +64,16 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         reopening = false;
     }
 
-    private void resetHandle(String title) {
-        this.handle = Bukkit.createInventory(this, 54, title);
+    private void resetHandle(Component title) {
+        this.handle = InventoryCreator.getInventoryCreator().createInventory(this, 54, title);
     }
 
+    @Deprecated
     public void setTitle(String title) {
+        setTitle(LegacyComponentSerializer.legacySection().deserialize(title));
+    }
+
+    public void setTitle(Component title) {
         reopen(() -> resetHandle(title));
     }
 

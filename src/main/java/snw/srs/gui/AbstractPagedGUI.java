@@ -1,6 +1,7 @@
 package snw.srs.gui;
 
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.plugin.Plugin;
@@ -16,12 +17,13 @@ import static snw.srs.gui.GUISharedObjects.PREV_PAGE_BUTTON;
 public abstract class AbstractPagedGUI extends AbstractPluginGUI {
     private int page = 1;
 
+    @Deprecated
     protected AbstractPagedGUI(Plugin plugin, String title, UUID viewer) {
         super(plugin, title, viewer);
     }
 
-    protected AbstractPagedGUI(Plugin plugin, String title, Player viewer) {
-        this(plugin, title, viewer.getUniqueId());
+    protected AbstractPagedGUI(Plugin plugin, Component title, UUID viewer) {
+        super(plugin, title, viewer);
     }
 
     public final void nextPageAndScheduleDraw() {
