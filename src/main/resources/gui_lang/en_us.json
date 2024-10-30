@@ -1,0 +1,15 @@
+{
+  "gui.player_selector.deselect_all": "De-select All",
+  "gui.player_selector.finish": "Finish",
+  "gui.player_selector.nothing_was_selected": "No players was selected",
+  "gui.player_selector.over_limit": "Max selectable player count reached. The maximum count is %s.",
+  "gui.player_selector.should_broadcast.yes": "Should broadcast: &aYes",
+  "gui.player_selector.should_broadcast.no": "Should broadcast: &cNo",
+  "gui.player_selector.selected": "Selected!",
+  "gui.player_selector.select_all": "Select All",
+  "gui.player_selector.select_prompt": "Click to select!",
+  "gui.generic.back": "Back",
+  "gui.generic.cancel": "Cancel",
+  "gui.generic.previous_page": "Previous page",
+  "gui.generic.next_page": "Next page"
+}

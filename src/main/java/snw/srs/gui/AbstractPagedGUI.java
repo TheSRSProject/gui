@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Range;
 
 import java.util.OptionalInt;
+import java.util.UUID;
 
 import static snw.srs.gui.GUISharedObjects.NEXT_PAGE_BUTTON;
 import static snw.srs.gui.GUISharedObjects.PREV_PAGE_BUTTON;
@@ -15,8 +16,12 @@ import static snw.srs.gui.GUISharedObjects.PREV_PAGE_BUTTON;
 public abstract class AbstractPagedGUI extends AbstractPluginGUI {
     private int page = 1;
 
-    protected AbstractPagedGUI(Plugin plugin, String title) {
-        super(plugin, title);
+    protected AbstractPagedGUI(Plugin plugin, String title, UUID viewer) {
+        super(plugin, title, viewer);
+    }
+
+    protected AbstractPagedGUI(Plugin plugin, String title, Player viewer) {
+        this(plugin, title, viewer.getUniqueId());
     }
 
     public final void nextPageAndScheduleDraw() {
@@ -72,7 +77,7 @@ public abstract class AbstractPagedGUI extends AbstractPluginGUI {
         super.drawButtons();
         GUIButtonHelper helper = getButtonHelper();
         if (page > 1) {
-            helper.setButton(48, PREV_PAGE_BUTTON, (clicker, clickType) -> {
+            helper.setButton(48, build(PREV_PAGE_BUTTON), (clicker, clickType) -> {
                 prevPageAndScheduleDraw();
                 return GUIClickResult.CANCEL_CLICK;
             });
@@ -85,7 +90,7 @@ public abstract class AbstractPagedGUI extends AbstractPluginGUI {
             shouldPutNextPage = true;
         }
         if (shouldPutNextPage) {
-            helper.setButton(50, NEXT_PAGE_BUTTON, (clicker, clickType) -> {
+            helper.setButton(50, build(NEXT_PAGE_BUTTON), (clicker, clickType) -> {
                 nextPageAndScheduleDraw();
                 return GUIClickResult.CANCEL_CLICK;
             });

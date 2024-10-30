@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import snw.srs.gui.util.ItemBuilder;
+import snw.srs.gui.util.TranslatedItem;
 import snw.srs.nms.AdapterRetriever;
 
 import java.math.RoundingMode;
@@ -22,15 +23,16 @@ import java.util.*;
 import static snw.srs.gui.GUIButtonCallback.clickAndRedraw;
 import static snw.srs.gui.GUISharedObjects.CANCEL_BUTTON;
 import static snw.srs.gui.GUIUtils.runTask;
+import static snw.srs.gui.i18n.TranslationKeys.*;
 import static snw.srs.gui.util.BukkitGenericUtils.playSound;
 
 public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     private static final int MAX_PLAYERS_PER_PAGE = 28;
-    private static final ItemStack SUBMIT_BUTTON;
-    private static final ItemStack NOTICE_TARGET_Y;
-    private static final ItemStack NOTICE_TARGET_N;
-    private static final ItemStack SELECT_ALL;
-    private static final ItemStack DESELECT_ALL;
+    private static final TranslatedItem SUBMIT_BUTTON;
+    private static final TranslatedItem NOTICE_TARGET_Y;
+    private static final TranslatedItem NOTICE_TARGET_N;
+    private static final TranslatedItem SELECT_ALL;
+    private static final TranslatedItem DESELECT_ALL;
     protected final Set<UUID> selectedPlayers = new HashSet<>();
     private UUID pageUniqueId;
     @Getter
@@ -38,29 +40,19 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     private boolean broadcast;
 
     static {
-        SUBMIT_BUTTON = new ItemBuilder(Material.EMERALD_BLOCK)
-                .setDisplayName(ChatColor.GREEN + "完成选择")
-                .build();
-        NOTICE_TARGET_Y = new ItemBuilder(Material.GLOWSTONE_DUST)
-                .setDisplayName("是否通报: " + ChatColor.GREEN + "是")
-                .build();
-        NOTICE_TARGET_N = new ItemBuilder(Material.REDSTONE)
-                .setDisplayName("是否通报: " + ChatColor.RED + "否")
-                .build();
-        SELECT_ALL = new ItemBuilder(Material.MILK_BUCKET)
-                .setDisplayName("全选")
-                .build();
-        DESELECT_ALL = new ItemBuilder(Material.BUCKET)
-                .setDisplayName("全不选")
-                .build();
+        SUBMIT_BUTTON = new TranslatedItem(PLAYER_SELECTOR_FINISH, Material.EMERALD_BLOCK, ChatColor.GREEN);
+        NOTICE_TARGET_Y = new TranslatedItem(PLAYER_SELECTOR_SHOULD_BROADCAST_Y, Material.GLOWSTONE_DUST);
+        NOTICE_TARGET_N = new TranslatedItem(PLAYER_SELECTOR_SHOULD_BROADCAST_N, Material.REDSTONE);
+        SELECT_ALL = new TranslatedItem(PLAYER_SELECTOR_SELECT_ALL, Material.MILK_BUCKET);
+        DESELECT_ALL = new TranslatedItem(PLAYER_SELECTOR_DESELECT_ALL, Material.BUCKET);
     }
 
-    protected AbstractPlayersSelectorGUI(Plugin plugin, String title) {
-        super(plugin, title);
+    protected AbstractPlayersSelectorGUI(Plugin plugin, String title, UUID viewer) {
+        super(plugin, title, viewer);
     }
 
-    protected AbstractPlayersSelectorGUI(Plugin plugin, String title, Set<UUID> selected) {
-        this(plugin, title);
+    protected AbstractPlayersSelectorGUI(Plugin plugin, String title, UUID viewer, Set<UUID> selected) {
+        this(plugin, title, viewer);
         this.selectedPlayers.addAll(selected);
     }
 
@@ -79,6 +71,10 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
 
     @Override
     protected void drawImmediatelyImpl(int page) {
+        Player viewerHandle = Bukkit.getPlayer(getViewer());
+        if (viewerHandle == null) {
+            return;
+        }
         pageUniqueId = UUID.randomUUID();
         drawFrame();
         drawButtons();
@@ -101,11 +97,17 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
                 }
                 final ItemStack finalItem;
                 final String selectStatus;
+                final ChatColor nameColor;
+                final String nameKey;
                 if (selectedPlayers.contains(uuid)) {
-                    selectStatus = ChatColor.GREEN + "已选择!";
+                    nameColor = ChatColor.GREEN;
+                    nameKey = PLAYER_SELECTOR_SELECTED;
                 } else {
-                    selectStatus = ChatColor.YELLOW + "点击选择!";
+                    nameColor = ChatColor.YELLOW;
+                    nameKey = PLAYER_SELECTOR_SELECT_PROMPT;
                 }
+                // we regard name as template because there is no argument to fill in
+                selectStatus = nameColor + getI18nEngine().getTemplateOrAsIs(viewerHandle, nameKey);
                 final ItemBuilder builder = new ItemBuilder(item)
                         .setDisplayName(name)
                         .setLore("", selectStatus);
@@ -154,9 +156,8 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             if (maxSelectablePlayers.isPresent()) {
                 int maxSelectablePlayersAsInt = maxSelectablePlayers.getAsInt();
                 if (selectedPlayers.size() > maxSelectablePlayersAsInt) {
-                    final String overMax =
-                            "%s已达到最大可选数量。最大可选 %d 个玩家。".formatted(
-                                    ChatColor.RED, maxSelectablePlayersAsInt);
+                    final String overMax = ChatColor.RED +
+                            getI18nEngine().formatMessage(clicker, PLAYER_SELECTOR_OVER_LIMIT, List.of(maxSelectablePlayersAsInt));
                     clicker.sendMessage(overMax);
                     playSound(clicker, Sound.BLOCK_ANVIL_PLACE);
                     return;
@@ -169,9 +170,9 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     }
 
     @Override
-    public void handleClose(Player viewer) {
+    public void handleClose() {
         // reopen if not disposed yet
-        getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> showTo(viewer), 1L);
+        getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), this::show, 1L);
     }
 
     @Override
@@ -179,9 +180,10 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         super.drawButtons();
 
         GUIButtonHelper helper = getButtonHelper();
-        helper.setButton(49, SUBMIT_BUTTON, (clicker, clickType) -> {
+        helper.setButton(49, build(SUBMIT_BUTTON), (clicker, clickType) -> {
             if (requireNonEmptySelectedPlayersSet() && selectedPlayers.isEmpty()) {
-                clicker.sendMessage(ChatColor.RED + "你尚未选择任何玩家！");
+                String failMessage = getI18nEngine().getTemplateOrAsIs(clicker, PLAYER_SELECTOR_NOTHING_WAS_SELECTED);
+                clicker.sendMessage(ChatColor.RED + failMessage);
                 playSound(clicker, Sound.BLOCK_ANVIL_PLACE);
             } else {
                 ImmutableSet<UUID> selected = ImmutableSet.copyOf(selectedPlayers);
@@ -192,22 +194,22 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             }
             return GUIClickResult.CANCEL_CLICK;
         });
-        helper.setButton(53, CANCEL_BUTTON, (clicker, clickType) -> {
+        helper.setButton(53, build(CANCEL_BUTTON), (clicker, clickType) -> {
             dispose(false);
             afterCancel(clicker);
             return GUIClickResult.CANCEL_CLICK;
         });
 
-        helper.setButton(46, SELECT_ALL, clickAndRedraw(this, (clicker, clickType) -> {
+        helper.setButton(46, build(SELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
             selectedPlayers.addAll(getPlayersBaseList().stream().map(Player::getUniqueId).toList());
         }));
-        helper.setButton(47, DESELECT_ALL, clickAndRedraw(this, (clicker, clickType) -> {
+        helper.setButton(47, build(DESELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
             selectedPlayers.clear();
         }));
 
         if (showBroadcastButton()) {
-            final ItemStack switchButton = broadcast ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
-            helper.setButton(45, switchButton, clickAndRedraw(this, (clicker, clickType) -> {
+            final TranslatedItem switchButton = broadcast ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
+            helper.setButton(45, build(switchButton), clickAndRedraw(this, (clicker, clickType) -> {
                 setBroadcast(!isBroadcast());
             }));
         }

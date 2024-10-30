@@ -8,17 +8,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import snw.srs.gui.interfaces.Disposable;
+import snw.srs.gui.util.TranslatedItem;
+import snw.srs.i18n.bukkit.BukkitI18NEngine;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static snw.srs.gui.GUISharedObjects.FRAME_ITEM;
 
 public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     @Getter
     private final Plugin plugin;
+    @Getter
+    private final UUID viewer;
+    @Getter
+    private final BukkitI18NEngine i18nEngine;
     private Inventory handle;
     @Getter
     private boolean disposed = false;
@@ -27,18 +35,23 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     private boolean firstOpen = true;
     private GUIButtonHelper buttonHelper;
 
-    protected AbstractPluginGUI(Plugin plugin, String title) {
+    protected AbstractPluginGUI(Plugin plugin, String title, UUID viewer) {
         this.plugin = plugin;
+        this.i18nEngine = GUII18NEngineBoard.getOrCreate(plugin);
+        this.viewer = viewer;
         GUIEventDispatcher.registerIfNeededFor(plugin);
         GUIEventDispatcher.activeGUIs.put(plugin.getName(), this);
         resetHandle(title);
     }
 
-    protected void reopenForAll(Runnable beforeReopen) {
+    protected void reopen(Runnable beforeReopen) {
         reopening = true;
-        ImmutableList<HumanEntity> viewers = closeForAll();
+        close();
         beforeReopen.run();
-        viewers.forEach(this::showTo);
+        Player viewerHandle = Bukkit.getPlayer(viewer);
+        if (viewerHandle != null) {
+            viewerHandle.openInventory(getInventory());
+        }
         reopening = false;
     }
 
@@ -47,21 +60,26 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     }
 
     public void setTitle(String title) {
-        reopenForAll(() -> resetHandle(title));
+        reopen(() -> resetHandle(title));
     }
 
-    public void showTo(HumanEntity player) {
+    public boolean show() {
         if (disposed) {
-            return;
+            return false;
         }
-        if (handle.equals(player.getOpenInventory().getTopInventory())) { // reopening
-            player.closeInventory();
+        Player viewerHandle = Bukkit.getPlayer(viewer);
+        if (viewerHandle == null) {
+            return false;
+        }
+        if (handle.equals(viewerHandle.getOpenInventory().getTopInventory())) { // reopening
+            viewerHandle.closeInventory();
         }
         if (firstOpen) {
             drawImmediately(); // init the gui when it is being displayed for the first time
             firstOpen = false;
         }
-        player.openInventory(getInventory());
+        viewerHandle.openInventory(getInventory());
+        return true;
     }
 
     // call this instead if we are in handleClick method
@@ -84,7 +102,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         return GUIClickResult.NOP;
     }
 
-    public abstract void handleClose(Player viewer);
+    public abstract void handleClose();
 
     public void dispose(boolean closeInvImmediately) {
         if (disposed) {
@@ -92,7 +110,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         }
         disposed = true;
         Runnable closeOp = () -> {
-            closeForAll();
+            close();
             clear();
             GUIEventDispatcher.activeGUIs.remove(getPlugin().getName(), this);
         };
@@ -103,7 +121,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         }
     }
 
-    protected ImmutableList<HumanEntity> closeForAll() {
+    protected void close() {
         ImmutableList<HumanEntity> viewers = ImmutableList.copyOf(handle.getViewers());
         for (HumanEntity viewer : viewers) {
             viewer.closeInventory();
@@ -115,7 +133,6 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
                 player.updateInventory(); // remove fake items taken from the GUI
             }
         }
-        return viewers;
     }
 
     public void clear() {
@@ -157,5 +174,11 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
 
     public Optional<GUIButtonHelper> getButtonHelperOptionally() {
         return Optional.ofNullable(buttonHelper);
+    }
+
+    protected ItemStack build(TranslatedItem item) {
+        Player viewerHandle = Bukkit.getPlayer(viewer);
+        assert viewerHandle != null;
+        return item.buildFor(viewerHandle, i18nEngine);
     }
 }

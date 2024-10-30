@@ -54,7 +54,7 @@ public final class GUIEventDispatcher implements Listener {
                 return;
             }
             if (e.getPlayer() instanceof Player viewer) {
-                gui.handleClose(viewer);
+                gui.handleClose();
             }
         }
     }
@@ -112,7 +112,8 @@ public final class GUIEventDispatcher implements Listener {
     // According to Bukkit API code, we have the last chance to do cleanup
     // before we're being fully disabled.
     public void onPluginDisable(PluginDisableEvent event) {
-        String name = event.getPlugin().getName();
+        Plugin involvedPlugin = event.getPlugin();
+        String name = involvedPlugin.getName();
         boolean removed = registeredPlugins.remove(name);
         if (removed) {
             Collection<AbstractPluginGUI> pluginActiveGUIs;
@@ -121,6 +122,7 @@ public final class GUIEventDispatcher implements Listener {
                 // We must close this immediately as we will not be able to schedule tasks
                 gui.dispose(true);
             }
+            GUII18NEngineBoard.disposeFor(involvedPlugin);
         }
     }
 }
