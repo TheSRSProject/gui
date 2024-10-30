@@ -77,7 +77,7 @@ public abstract class AbstractPagedGUI extends AbstractPluginGUI {
         super.drawButtons();
         GUIButtonHelper helper = getButtonHelper();
         if (page > 1) {
-            helper.setButton(48, build(PREV_PAGE_BUTTON), (clicker, clickType) -> {
+            helper.setButton(48, buildTranslated(PREV_PAGE_BUTTON), (clicker, clickType) -> {
                 prevPageAndScheduleDraw();
                 return GUIClickResult.CANCEL_CLICK;
             });
@@ -90,7 +90,7 @@ public abstract class AbstractPagedGUI extends AbstractPluginGUI {
             shouldPutNextPage = true;
         }
         if (shouldPutNextPage) {
-            helper.setButton(50, build(NEXT_PAGE_BUTTON), (clicker, clickType) -> {
+            helper.setButton(50, buildTranslated(NEXT_PAGE_BUTTON), (clicker, clickType) -> {
                 nextPageAndScheduleDraw();
                 return GUIClickResult.CANCEL_CLICK;
             });

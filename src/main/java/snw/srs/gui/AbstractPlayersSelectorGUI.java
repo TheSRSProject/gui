@@ -180,7 +180,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         super.drawButtons();
 
         GUIButtonHelper helper = getButtonHelper();
-        helper.setButton(49, build(SUBMIT_BUTTON), (clicker, clickType) -> {
+        helper.setButton(49, buildTranslated(SUBMIT_BUTTON), (clicker, clickType) -> {
             if (requireNonEmptySelectedPlayersSet() && selectedPlayers.isEmpty()) {
                 String failMessage = getI18nEngine().getTemplateOrAsIs(clicker, PLAYER_SELECTOR_NOTHING_WAS_SELECTED);
                 clicker.sendMessage(ChatColor.RED + failMessage);
@@ -194,22 +194,22 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             }
             return GUIClickResult.CANCEL_CLICK;
         });
-        helper.setButton(53, build(CANCEL_BUTTON), (clicker, clickType) -> {
+        helper.setButton(53, buildTranslated(CANCEL_BUTTON), (clicker, clickType) -> {
             dispose(false);
             afterCancel(clicker);
             return GUIClickResult.CANCEL_CLICK;
         });
 
-        helper.setButton(46, build(SELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
+        helper.setButton(46, buildTranslated(SELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
             selectedPlayers.addAll(getPlayersBaseList().stream().map(Player::getUniqueId).toList());
         }));
-        helper.setButton(47, build(DESELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
+        helper.setButton(47, buildTranslated(DESELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
             selectedPlayers.clear();
         }));
 
         if (showBroadcastButton()) {
             final TranslatedItem switchButton = broadcast ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
-            helper.setButton(45, build(switchButton), clickAndRedraw(this, (clicker, clickType) -> {
+            helper.setButton(45, buildTranslated(switchButton), clickAndRedraw(this, (clicker, clickType) -> {
                 setBroadcast(!isBroadcast());
             }));
         }

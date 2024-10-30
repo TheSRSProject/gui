@@ -176,7 +176,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         return Optional.ofNullable(buttonHelper);
     }
 
-    protected ItemStack build(TranslatedItem item) {
+    protected ItemStack buildTranslated(TranslatedItem item) {
         Player viewerHandle = Bukkit.getPlayer(viewer);
         assert viewerHandle != null;
         return item.buildFor(viewerHandle, i18nEngine);
