@@ -9,7 +9,7 @@ import org.bukkit.inventory.InventoryHolder;
 final class SpigotInventoryCreator extends InventoryCreator {
     @Override
     public Inventory createInventory(InventoryHolder holder, int size, Component title) {
-        String asLegacy = LegacyComponentSerializer.legacyAmpersand().serialize(title);
+        String asLegacy = LegacyComponentSerializer.legacySection().serialize(title);
         // We had no way as we're on Spigot
         // noinspection deprecation
         return Bukkit.createInventory(holder, size, asLegacy);
