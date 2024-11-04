@@ -183,6 +183,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
 
     @Override
     public void handleClose() {
+        super.handleClose();
         // reopen if not disposed yet
         getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), this::show, 1L);
     }

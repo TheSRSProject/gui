@@ -116,7 +116,14 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         return GUIClickResult.NOP;
     }
 
-    public abstract void handleClose();
+    public void handleClose() {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Player viewerHandle = Bukkit.getPlayer(viewer);
+            if (viewerHandle != null) {
+                viewerHandle.updateInventory();
+            }
+        }, 1L);
+    }
 
     public void dispose(boolean closeInvImmediately) {
         if (disposed) {

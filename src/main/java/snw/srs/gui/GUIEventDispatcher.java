@@ -53,7 +53,7 @@ public final class GUIEventDispatcher implements Listener {
             if (!gui.getPlugin().equals(plugin)) {
                 return;
             }
-            if (e.getPlayer() instanceof Player viewer) {
+            if (e.getPlayer() instanceof Player) {
                 gui.handleClose();
             }
         }
