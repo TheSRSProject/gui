@@ -113,6 +113,9 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         if (disposed) {
             return GUIClickResult.CANCEL_CLICK; // invalid click
         }
+        if (buttonHelper != null) {
+            return buttonHelper.handleClick(clicker, slot, clickType);
+        }
         return GUIClickResult.NOP;
     }
 
