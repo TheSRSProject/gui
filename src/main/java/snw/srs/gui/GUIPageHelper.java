@@ -39,15 +39,23 @@ public final class GUIPageHelper {
         setPage(page, false);
     }
 
-    public void setPage(@Range(from = 1, to = Integer.MAX_VALUE) int page, boolean drawImmediately) {
+    // return true if page was set successfully
+    public boolean setPageNoUpdate(@Range(from = 1, to = Integer.MAX_VALUE) int page) {
         if (this.page != page) {
             OptionalInt maxPage = getMaxPage();
             if (maxPage.isPresent()) {
-                if (page > maxPage.getAsInt()) {
-                    return;
+                if (page <= maxPage.getAsInt()) {
+                    this.page = page;
+                    return true;
                 }
             }
-            this.page = page;
+        }
+        return false;
+    }
+
+    public void setPage(@Range(from = 1, to = Integer.MAX_VALUE) int page, boolean drawImmediately) {
+        boolean updated = setPageNoUpdate(page);
+        if (updated) {
             if (drawImmediately) {
                 owner.drawImmediately();
             } else {
