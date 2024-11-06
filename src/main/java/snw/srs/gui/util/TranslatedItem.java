@@ -42,6 +42,6 @@ public record TranslatedItem(
         } else {
             finalName = name;
         }
-        return itemBuilder.setDisplayName(finalName).build();
+        return itemBuilder.copy().setDisplayName(finalName).build();
     }
 }

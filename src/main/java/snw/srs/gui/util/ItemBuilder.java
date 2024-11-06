@@ -59,4 +59,8 @@ public final class ItemBuilder {
         this.stack.setItemMeta(meta);
         return this;
     }
+
+    public ItemBuilder copy() {
+        return new ItemBuilder(this.stack);
+    }
 }
