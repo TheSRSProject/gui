@@ -31,6 +31,8 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     private final UUID viewer;
     @Getter
     private final BukkitI18NEngine i18nEngine;
+    @Getter
+    private final int size;
     private Inventory handle;
     @Getter
     private boolean disposed = false;
@@ -44,10 +46,20 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         this(plugin, text(title), viewer);
     }
 
+    @Deprecated
+    protected AbstractPluginGUI(Plugin plugin, String title, UUID viewer, int size) {
+        this(plugin, text(title), viewer, size);
+    }
+
     protected AbstractPluginGUI(Plugin plugin, Component title, UUID viewer) {
+        this(plugin, title, viewer, 54);
+    }
+
+    protected AbstractPluginGUI(Plugin plugin, Component title, UUID viewer, int size) {
         this.plugin = plugin;
         this.i18nEngine = GUII18NEngineBoard.getOrCreate(plugin);
         this.viewer = viewer;
+        this.size = size;
         GUIEventDispatcher.registerIfNeededFor(plugin);
         GUIEventDispatcher.activeGUIs.put(plugin.getName(), this);
         resetHandle(title);
@@ -65,7 +77,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     }
 
     private void resetHandle(Component title) {
-        this.handle = InventoryCreator.getInventoryCreator().createInventory(this, 54, title);
+        this.handle = InventoryCreator.getInventoryCreator().createInventory(this, this.size, title);
     }
 
     @Deprecated
