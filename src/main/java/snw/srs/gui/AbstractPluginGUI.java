@@ -190,10 +190,21 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     }
 
     protected void drawFrame() {
-        int[] frameSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
         GUIButtonHelper helper = getButtonHelper();
-        for (int slot : frameSlots) {
-            helper.setBlockedSlot(slot, FRAME_ITEM);
+        int rows = size / 9;
+        int end = rows - 1;
+        for (int i = 0; i < rows; i++) {
+            int _9i = i * 9;
+            if (i == 0 || i == end) {
+                for (int j = 0; j < 9; j++) {
+                    int k = _9i + j;
+                    helper.setBlockedSlot(k, FRAME_ITEM);
+                }
+            } else {
+                int right = _9i + 8;
+                helper.setBlockedSlot(_9i, FRAME_ITEM); // i * 9 = the first slot of this row
+                helper.setBlockedSlot(right, FRAME_ITEM);
+            }
         }
     }
 
