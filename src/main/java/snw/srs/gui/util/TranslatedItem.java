@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 public record TranslatedItem(
         String nameKey,
         ItemBuilder itemBuilder,
-        BiFunction<String, BukkitI18NEngine, String> finalFormatter
+        BiFunction<String, BukkitI18NEngine<String>, String> finalFormatter
 ) {
 
     public TranslatedItem(String nameKey, Material material) {
@@ -27,14 +27,14 @@ public record TranslatedItem(
     }
 
     public TranslatedItem(String nameKey, ItemBuilder itemBuilder) {
-        this(nameKey, itemBuilder, (BiFunction<String, BukkitI18NEngine, String>) null);
+        this(nameKey, itemBuilder, (BiFunction<String, BukkitI18NEngine<String>, String>) null);
     }
 
     public TranslatedItem(String nameKey, ItemBuilder itemBuilder, ChatColor nameColorPrefix) {
         this(nameKey, itemBuilder, (template, engine) -> nameColorPrefix + template);
     }
 
-    public ItemStack buildFor(Player audience, BukkitI18NEngine i18nEngine) {
+    public ItemStack buildFor(Player audience, BukkitI18NEngine<String> i18nEngine) {
         String name = i18nEngine.getTemplateOrAsIs(audience, nameKey);
         String finalName;
         if (finalFormatter != null) {

@@ -34,7 +34,7 @@ dependencies {
     implementation "com.github.TheSRSProject.NMSUtilities:main:main-SNAPSHOT"
     implementation "com.github.TheSRSProject.NMSUtilities:v1_20_R1:main-SNAPSHOT"
 
-    implementation "com.github.TheSRSProject.i18n:i18n-bukkit:main-SNAPSHOT"
+    implementation "com.github.TheSRSProject.i18n:i18n-bukkit-adventure:main-SNAPSHOT"
 
     compileOnly lombok
     annotationProcessor lombok

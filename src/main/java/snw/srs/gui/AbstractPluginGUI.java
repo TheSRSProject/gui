@@ -30,7 +30,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     @Getter
     private final UUID viewer;
     @Getter
-    private final BukkitI18NEngine i18nEngine;
+    private final BukkitI18NEngine<String> i18nEngine;
     @Getter
     private final int size;
     private Inventory handle;
