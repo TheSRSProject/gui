@@ -79,7 +79,7 @@ public final class GUIEventDispatcher implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(InventoryClickEvent e) {
         Inventory clickedInv = e.getClickedInventory();
         if (clickedInv == null) {
