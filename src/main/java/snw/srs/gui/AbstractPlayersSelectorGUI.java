@@ -2,9 +2,6 @@ package snw.srs.gui;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.IntMath;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -31,20 +28,13 @@ import static snw.srs.gui.util.BukkitGenericUtils.playSound;
 public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     private static final int MAX_PLAYERS_PER_PAGE = 28;
     private static final TranslatedItem SUBMIT_BUTTON;
-    private static final TranslatedItem NOTICE_TARGET_Y;
-    private static final TranslatedItem NOTICE_TARGET_N;
     private static final TranslatedItem SELECT_ALL;
     private static final TranslatedItem DESELECT_ALL;
     protected final Set<UUID> selectedPlayers = new HashSet<>();
     private UUID pageUniqueId;
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
-    private boolean broadcast;
 
     static {
         SUBMIT_BUTTON = new TranslatedItem(PLAYER_SELECTOR_FINISH, Material.EMERALD_BLOCK, ChatColor.GREEN);
-        NOTICE_TARGET_Y = new TranslatedItem(PLAYER_SELECTOR_SHOULD_BROADCAST_Y, Material.GLOWSTONE_DUST);
-        NOTICE_TARGET_N = new TranslatedItem(PLAYER_SELECTOR_SHOULD_BROADCAST_N, Material.REDSTONE);
         SELECT_ALL = new TranslatedItem(PLAYER_SELECTOR_SELECT_ALL, Material.MILK_BUCKET);
         DESELECT_ALL = new TranslatedItem(PLAYER_SELECTOR_DESELECT_ALL, Material.BUCKET);
     }
@@ -221,10 +211,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         }));
 
         if (showBroadcastButton()) {
-            final TranslatedItem switchButton = broadcast ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
-            helper.setButton(45, buildTranslated(switchButton), clickAndRedraw(this, (clicker, clickType) -> {
-                setBroadcast(!isBroadcast());
-            }));
+            getOrCreateBroadcastChoiceHelper().drawButton(helper);
         }
     }
 
@@ -236,6 +223,32 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         return false;
     }
 
+    // The following deprecated things are only exist for backwards compatibility, DO NOT USE.
+    // They will be removed in a random commit, so they are not reliable.
+    @Deprecated(forRemoval = true)
+    public boolean isBroadcast() {
+        return broadcastChoiceHelper != null && broadcastChoiceHelper.isStatusTrue();
+    }
+
+    @Deprecated(forRemoval = true)
+    public void setBroadcast(boolean broadcast) {
+        getOrCreateBroadcastChoiceHelper().setStatusTrue(broadcast);
+    }
+
+    @Deprecated(forRemoval = true)
+    private BroadcastChoiceHelper broadcastChoiceHelper;
+    @Deprecated(forRemoval = true)
+    private BroadcastChoiceHelper getOrCreateBroadcastChoiceHelper() {
+        if (broadcastChoiceHelper == null) {
+            broadcastChoiceHelper = new BroadcastChoiceHelper(this, 45);
+        }
+        return broadcastChoiceHelper;
+    }
+    /**
+     * @deprecated Use {@link BroadcastChoiceHelper#drawButton(GUIButtonHelper)} on
+     *  your own instance of it if you need to show broadcast button.
+     */
+    @Deprecated(forRemoval = true)
     protected boolean showBroadcastButton() {
         return false;
     }
