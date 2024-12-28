@@ -93,7 +93,6 @@ public final class GUIEventDispatcher implements Listener {
                 return;
             }
             if (!Objects.equals(clickedInv, gui.getInventory())) {
-                e.setCancelled(true);
                 return;
             }
             if (e.getWhoClicked() instanceof Player clicker) { // or GameTest in Bukkit?
