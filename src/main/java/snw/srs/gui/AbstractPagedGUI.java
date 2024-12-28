@@ -52,7 +52,7 @@ public abstract class AbstractPagedGUI extends AbstractPluginGUI {
     protected abstract void drawImmediatelyImpl(int page);
 
     @Override
-    public void drawButtons() {
+    protected void drawButtons() {
         super.drawButtons();
         pageHelper.drawButtons();
     }

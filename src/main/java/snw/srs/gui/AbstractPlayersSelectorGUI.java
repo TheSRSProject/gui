@@ -189,7 +189,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
     }
 
     @Override
-    public void drawButtons() {
+    protected void drawButtons() {
         super.drawButtons();
 
         GUIButtonHelper helper = getButtonHelper();
