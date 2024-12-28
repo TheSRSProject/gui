@@ -33,5 +33,8 @@ public abstract class InventoryCreator {
                 INSTANCE = new SpigotInventoryCreator();
             }
         }
+
+        private Singleton() {
+        }
     }
 }
