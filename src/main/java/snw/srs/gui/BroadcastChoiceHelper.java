@@ -25,8 +25,18 @@ public final class BroadcastChoiceHelper {
         NOTICE_TARGET_N = new TranslatedItem(PLAYER_SELECTOR_SHOULD_BROADCAST_N, Material.REDSTONE);
     }
 
+    /**
+     * @deprecated GUIButtonHelper argument is unnecessary here as we could get it
+     * from the owner GUI, this is a design fault.
+     */
+    @Deprecated(forRemoval = true)
     public void drawButton(GUIButtonHelper helper) {
+        drawButton();
+    }
+
+    public void drawButton() {
         final TranslatedItem switchButton = isStatusTrue() ? NOTICE_TARGET_Y : NOTICE_TARGET_N;
+        final GUIButtonHelper helper = owner.getButtonHelper();
         helper.setButton(buttonSlot, owner.buildTranslated(switchButton), clickAndRedraw(owner, (clicker, clickType) -> {
             setStatusTrue(!isStatusTrue());
         }));
