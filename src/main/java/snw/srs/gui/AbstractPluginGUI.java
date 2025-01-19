@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import static net.kyori.adventure.text.Component.text;
 import static snw.srs.gui.GUISharedObjects.FRAME_ITEM;
+import static snw.srs.gui.GUIUtils.runTask;
 
 public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
     @Getter
@@ -156,7 +157,7 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
         if (closeInvImmediately) {
             closeOp.run();
         } else {
-            getPlugin().getServer().getScheduler().runTask(getPlugin(), closeOp);
+            runTask(plugin).execute(closeOp);
         }
     }
 
