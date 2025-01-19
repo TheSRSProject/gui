@@ -145,6 +145,9 @@ public abstract class AbstractPluginGUI implements InventoryHolder, Disposable {
             return;
         }
         disposed = true;
+        if (buttonHelper != null) {
+            buttonHelper.dispose();
+        }
         Runnable closeOp = () -> {
             close();
             clear();
