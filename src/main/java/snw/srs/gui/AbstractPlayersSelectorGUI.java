@@ -203,12 +203,14 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             return GUIClickResult.CANCEL_CLICK;
         });
 
-        helper.setButton(46, buildTranslated(SELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
-            selectedPlayers.addAll(getPlayersBaseList().stream().map(Player::getUniqueId).toList());
-        }));
-        helper.setButton(47, buildTranslated(DESELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
-            selectedPlayers.clear();
-        }));
+        if (getMaxSelectablePlayers().isEmpty()) {
+            helper.setButton(46, buildTranslated(SELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
+                selectedPlayers.addAll(getPlayersBaseList().stream().map(Player::getUniqueId).toList());
+            }));
+            helper.setButton(47, buildTranslated(DESELECT_ALL), clickAndRedraw(this, (clicker, clickType) -> {
+                selectedPlayers.clear();
+            }));
+        }
 
         if (showBroadcastButton()) {
             getOrCreateBroadcastChoiceHelper().drawButton(helper);
