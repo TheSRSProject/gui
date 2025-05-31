@@ -11,6 +11,7 @@ public final class TranslationKeys {
     public static final String PLAYER_SELECTOR_SELECTED = "gui.player_selector.selected";
     public static final String PLAYER_SELECTOR_SELECT_ALL = "gui.player_selector.select_all";
     public static final String PLAYER_SELECTOR_SELECT_PROMPT = "gui.player_selector.select_prompt";
+    public static final String GENERIC_FINISH = "gui.generic.finish";
     public static final String GENERIC_BACK = "gui.generic.back";
     public static final String GENERIC_CANCEL = "gui.generic.cancel";
     public static final String GENERIC_PREVIOUS_PAGE = "gui.generic.previous_page";

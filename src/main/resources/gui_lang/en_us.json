@@ -8,6 +8,7 @@
   "gui.player_selector.selected": "Selected!",
   "gui.player_selector.select_all": "Select All",
   "gui.player_selector.select_prompt": "Click to select!",
+  "gui.generic.finish": "Finish",
   "gui.generic.back": "Back",
   "gui.generic.cancel": "Cancel",
   "gui.generic.previous_page": "Previous page",

@@ -8,6 +8,7 @@
   "gui.player_selector.selected": "已选择!",
   "gui.player_selector.select_all": "全选",
   "gui.player_selector.select_prompt": "点击选择!",
+  "gui.generic.finish": "完成",
   "gui.generic.back": "返回",
   "gui.generic.cancel": "取消",
   "gui.generic.previous_page": "上一页",
