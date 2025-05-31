@@ -158,10 +158,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
             if (maxSelectablePlayers.isPresent()) {
                 int maxSelectablePlayersAsInt = maxSelectablePlayers.getAsInt();
                 if (selectedPlayers.size() > maxSelectablePlayersAsInt) {
-                    final String overMax = ChatColor.RED +
-                            getI18nEngine().formatMessage(clicker, PLAYER_SELECTOR_OVER_LIMIT, List.of(maxSelectablePlayersAsInt));
-                    clicker.sendMessage(overMax);
-                    playSound(clicker, Sound.BLOCK_ANVIL_PLACE);
+                    handleSelectionOverLimit(clicker, maxSelectablePlayersAsInt);
                     return;
                 }
             }
@@ -169,6 +166,13 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
         }
         playSound(clicker, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
         scheduleDraw();
+    }
+
+    protected void handleSelectionOverLimit(Player clicker, int max) {
+        final String overMax = ChatColor.RED +
+                getI18nEngine().formatMessage(clicker, PLAYER_SELECTOR_OVER_LIMIT, List.of(max));
+        clicker.sendMessage(overMax);
+        playSound(clicker, Sound.BLOCK_ANVIL_PLACE);
     }
 
     @Override
