@@ -62,7 +62,7 @@ public abstract class AbstractPlayersSelectorGUI extends AbstractPagedGUI {
 
     @Override
     public OptionalInt getMaxPage() {
-        int size = Bukkit.getOnlinePlayers().size();
+        int size = getPlayersBaseList().size();
         int result = IntMath.divide(size, MAX_PLAYERS_PER_PAGE, RoundingMode.CEILING);
         return OptionalInt.of(result);
     }
