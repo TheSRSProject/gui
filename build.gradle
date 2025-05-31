@@ -33,7 +33,7 @@ dependencies {
     api "com.github.TheSRSProject.NMSUtilities:common:main-SNAPSHOT"
     api "com.github.TheSRSProject.NMSUtilities:main:main-SNAPSHOT"
 
-    implementation "com.github.TheSRSProject.i18n:i18n-bukkit-adventure:main-SNAPSHOT"
+    api "com.github.TheSRSProject.i18n:i18n-bukkit-adventure:main-SNAPSHOT"
 
     compileOnly lombok
     annotationProcessor lombok
